@@ -1,0 +1,156 @@
+---
+title: "Notes-Week1"
+author: "Jonathan Speh"
+format: html
+---
+
+
+```{r}
+library(shiny)
+library(shinydashboard)
+```
+
+## Shiny
+
+- Purpose - create webapps
+- GUI - Client side, everything that is visible in the final app
+- server - logic, everything the app does 
+
+
+## Hirarchy of UI  - Funktions 
+
+Fluid page 
+ - top level funktion
+ 
+title panel 
+- title of the app
+
+sidebar layout
+sidepar panel 
+
+- creates Sidebar 
+
+input slider
+ - inside the sidebar panel 
+ 
+ main panale
+- shows the output stuff
+
+## Shinydasbord
+Can be used to replace basic shiny function and extend functionality 
+
+Important functions: 
+```{r}
+#| eval: false
+ui <- dashboardPage(   #replaces fluidPage(
+  dashboardHeader(),   # replaces titlePanel(
+  dashboardSidebar( # replaces sidebarLayout(
+    sidebarMenu()    # replaces sidebarPanel(
+    ),
+  dashboardBody()    # replaces mainPanel(
+  )
+
+```
+
+
+## Minimum components der UI:
+- Header 
+    - main arg: `title`
+- sidebar
+    - used `sidebarMenu` for input
+- Body
+    - show output 
+
+Minimum function:
+```{r}
+#| eval: false
+ui <- dashboardPage(
+        dashboardHeader(),
+        dashboardSidebar(),
+        dashboardBody()
+    )
+```
+
+
+## Structure of the dashboard
+
+`colum` function breaks screen in 12 section - imput is int. from 1 - 12
+
+```{r}
+#| eval: false
+ui <- dashboardPage(
+        dashboardHeader(),
+        dashboardSidebar(),
+        dashboardBody(
+          column(width = 4,
+                 #sliderInput(...)
+                 ),
+          column(width = 8,
+                 #plotOutput(...)
+                 )
+        )
+    )
+```
+
+`box` breaks down the dashboard further and gives more structure (headers, style)
+```{r}
+#| eval: false
+ui <- dashboardPage(
+        dashboardHeader(),
+        dashboardSidebar(),
+        dashboardBody(
+          column(width = 4,
+                 box(width = 12, # relative to container above 
+                     title = "slider Input",
+                     status = "primary",
+                     # background, footer,...
+                     collapsible = TRUE # collapse button
+                 #sliderInput(...)
+                 ))),
+          column(width = 8,
+                 #plotOutput(...)
+                 )
+        )
+    
+```
+
+`fluidRows` can be used to create top / bottom layout 
+
+```{r}
+#| eval: false
+ui <- dashboardPage(
+        dashboardHeader(),
+        dashboardSidebar(),
+        dashboardBody(
+          fluidRow(box(width = 12, # relative to container above
+                       #sliderInput(...)
+                 )),
+          fluidRow(#plotOutput(...)
+            )))
+```
+
+## adding a Menue
+`sidebarMenu` + `tabItems` allows to chose several tabs from the sidbar Menue 
+```{r}
+#| eval: false
+ui <- dashboardPage(
+        dashboardHeader(),
+        dashboardSidebar(
+          sidebarMenu(
+            menuItem(tabName = "tab1",
+                     text = "Menu Item 1"),
+            menuItem(tabName = "tab2",
+                     text = "Menu Item 2"))
+        ),
+        dashboardBody(
+          tabItems(
+            tabItem(tabName = "tab1",
+                    "Here the first tab"),
+            tabItem(tabName = "tab2",
+                    "And here the second")
+          )
+        )
+)
+          
+```
+  
