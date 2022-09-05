@@ -1,0 +1,78 @@
+---
+title: "Notes_Week2"
+format: html
+---
+## Used Libraries
+```{r}
+#| eval: false
+library(shiny)
+library(shinydashboard)
+library(DT)
+library(echarts4r)
+library(leaflet)
+library(magrittr)
+library(shinyWidgets)
+```
+
+
+
+
+## Simple Datatable usinging {DT}
+
+- Use `renderDT({})` in Server and `DTOutput()` in UI - Consistent amongst other packages
+- Same logic for
+    - Visualisation with {Echarts4r}
+    - maps with  {leaflet}
+    
+- `renderEcharts4r` - renders Plot
+- `renderEcharts4r` - adds plot to output 
+- Tabs in {shinydashbord} - simply add `tabBox` and `tabPanel`
+- *Important* server funktions often use `myFunction({})`
+
+```{r}
+#| eval: false
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(disable = T),
+  dashboardBody(
+    fluidRow(DTOutput("datatable"))))
+
+# Server ----
+server <- function(input, output) {
+  output$datatable = renderDT({
+    datatable(iris)
+  })}
+
+shinyApp(ui = ui, server = server)
+```
+
+## Interaktive Components via {shinywidgets}
+
+- Webpages provides code for UI and Server
+- *Each* InputID and OutputID needs to be Unique, otherwise everything crashes
+
+Structure of input and output calls:
+
+```{r}
+#| eval: false
+#UI
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(),
+  dashboardBody(
+          sliderInput("inputID", label = h3("Slider"), min = 0, 
+                      max = 100, value = 50),
+          br(),
+          verbatimTextOutput("outputID")))
+
+
+server <- function(input, output) {
+  output$outputID <- renderPrint({ input$inputID })}
+shinyApp(ui = ui, server = server)
+```
+
+
+
+
+
+
