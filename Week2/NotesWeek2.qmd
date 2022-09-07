@@ -182,4 +182,34 @@ shinyApp(ui = ui, server = server)
 
 ```
 
+## Use modules fpr server and ui - allows you to break down app in smaller pices
+
+```{r}
+plotUI = function(id){
+  tagList(
+    plotOutput(NS(id, "myPlot")),
+    selectInput(NS(id, "myCol"), "select Color",
+                choices = c("red", "green", "blue"))
+    )}
+
+plotServer = function(id){
+  moduleServer(id, function(input, output, session){
+    output$myPlot = renderPlot({mpg %>% 
+        ggplot(aes(x = cty, y = hwy)) +
+        geom_smooth(method = "lm", formula = y~x) + 
+        geom_point(color = input$myCol)})})}
+
+# Minimum app
+
+plotApp = function(){
+  ui = fluidPage(
+    fluidRow(plotUI("myPlot1")))
+  server = function(input, output) {
+    plotServer("myPlot1")}
+shinyApp(ui = ui, server = server)}
+
+
+plotApp()
+```
+
 
