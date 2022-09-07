@@ -71,8 +71,115 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 ```
 
+## Include buttons
+- possible with `shiny::actioButton` or `shinyWidget;;actionBttn`
+- Used `bindEvent()` to "look at Button" at make event (e.g. a render) wait for the button
+- `bindEvent(renderPrint("Button Pressed"), input$buttonId)` = `renderPrint("Button pressed") |> bindEvent(input$buttonID)}` 
+
+```{r}
+#| eval: false
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(actionBttn("buttonID",
+                              label = "Roll virtual die")),
+  dashboardBody(
+          verbatimTextOutput("outputId")))
 
 
+server <- function(input, output) {
+  output$outputId <- renderPrint({sample(1:6,1)}) |>
+                      bindEvent(input$buttonID)}
 
+shinyApp(ui = ui, server = server)
+```
+
+## Notifications and modals
+
+- Notification - shows a little Pop-Up message that closes after a preset duration
+  - Created with `showNotification()`
+  - removed with `removeNotification()`
+  - Reactivity via  `observeEvent()`
+
+```{r}
+#| eval: false
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(actionBttn("buttonID",
+                              label = "Roll virtual die")),
+  dashboardBody(
+          verbatimTextOutput("outputId")))
+
+
+server <- function(input, output) {
+  output$outputId <- renderPrint({sample(1:6,1)}) |>
+    bindEvent(input$buttonID)
+  observeEvent(input$buttonID, {
+    showNotification("roll updated!",
+                     duration = 3,
+                     type = "message")})}
+
+shinyApp(ui = ui, server = server)
+``` 
+  
+
+- Modal dialogue - Kind of like a "pop-up box", allows to show messages in a box on top of the page  
+    - stays until closed 
+- Can be used to include any kind of UI Elements
+- Created with `showModal` as wrapper for `modalDialog()`, 
+- reactivity is like in `showNotification`
+Use cases:
+- request User Input
+- show details of table row etc. 
+
+
+```{r}
+#| eval: false
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(actionBttn("buttonID",
+                              label = "Roll virtual die")),
+  dashboardBody(
+          verbatimTextOutput("outputId")))
+
+
+server <- function(input, output) {
+  output$outputId <- renderPrint({sample(1:6,1)}) |>
+    bindEvent(input$buttonID)
+  observeEvent(input$buttonID, {
+    showModal(
+      modalDialog(title = "Important Message!",
+                  fluidRow(box(width = 12, status = "info",
+                                     "Roll updated")),
+                  easyClose = FALSE,
+                  size = "m"))})}
+
+shinyApp(ui = ui, server = server)
+``` 
+Experiments with `observeEvent`: 
+
+```{r}
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(sliderInput("inputId", label = h3("Enter hight in cm"), min = 100, 
+                      max = 200, value = 170),
+                   actionBttn("buttonId",label = "submit")),
+  dashboardBody(
+          verbatimTextOutput("outputId")))
+
+
+server <- function(input, output) {
+  observeEvent(input$inputId, if (input$inputId < 160){
+    output$outputId = renderText({"You are small!!"})} else {
+    output$outputId = renderText({"You are normal!!"})})}
+
+
+server <- function(input, output) {
+  observeEvent(input$buttonId, if (input$inputId < 160){
+    output$outputId = renderText({"You are small!!"})} else {
+    output$outputId = renderText({"You are normal!!"})})}
+
+shinyApp(ui = ui, server = server)
+
+```
 
 

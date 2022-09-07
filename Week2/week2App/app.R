@@ -11,13 +11,20 @@ library(magrittr)
 library(shinyWidgets)
 
 
+
+
 ##### UI 
 ui <- dashboardPage(
   dashboardHeader(
     title = "Week Two"
   ),
-  dashboardSidebar(disable = T
-  ),
+  dashboardSidebar(actionBttn("buttonId",
+                              label = "myButton",
+                              style = "jelly",
+                              color = "default",
+                              size = "lg",
+                              block = FALSE,
+                              no_outline = TRUE)),
   dashboardBody(
     fluidRow(
       box(width = 6,
@@ -32,6 +39,9 @@ ui <- dashboardPage(
                       max = 100, value = 50),
           br(),
           fluidRow(column(3, verbatimTextOutput("sliderValue"))),
+          br(),
+          fluidRow(column(12, box(width = 12, title="Reactive Slider Output",
+              verbatimTextOutput("buttonResponse")))),
           br(),
           textInput("text", label = h3("Text input"), value = "Enter text..."),
           
@@ -81,6 +91,14 @@ server <- function(input, output) {
   output$value <- renderPrint({ input$select })
   output$sliderValue <- renderPrint({ input$slider1 })
   output$textValue <- renderPrint({ input$text })
+  output$buttonResponse = bindEvent(renderPrint({input$slider1}), 
+                                    input$buttonId)
+  #alt:
+  #output$buttonResponse = renderText({"Button was clicked"})|>
+  #  bindEvent(input$buttonId)
+  observeEvent(input$buttonId, {
+    showNotification("Button clicked",   #alt: showModal(modalDialog())
+                     type = "message")})
 }
 
 # Run the application 
