@@ -1,0 +1,30 @@
+---
+title: "Notes Week3"
+format: html
+---
+
+
+```{r}
+#| message: false
+library(tidyverse)
+library(shiny)
+library(shinydashboard)
+```
+
+
+## Accessing data via google sheet API
+
+Accessing API via googlesheet4 requires google account + verifications.
+
+`gs4_auth()` - opens autentification broswer, can be included in app server
+ - when included in server, after running the app (locally), the console has to be used to create access before app is functional
+
+`range_read(ss="URL")` - allows to read in whole spreadsheet
+
+
+```{r}
+gs4_auth() # opens authentification Browser 
+propertyTable=range_read(ss="https://docs.google.com/spreadsheets/d/1u_2Nn_ZeN0VdEGYJewQ2bJd_1KZzzjjUpQLwZ6_r8Uw/edit#gid=0")
+
+```
+
