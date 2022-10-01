@@ -41,10 +41,8 @@ ui <- dashboardPage(
                      ,  selectInput("select", label = "Select box", 
                                     choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3), 
                                     selected = 1)
-                     , br()
                      , sliderInput("slider1", label = "Slider", min = 0, 
                                    max = 100, value = 50)
-                     , br()
                      , textInput("text", label = "Text input", value = "Enter text...")
             )
             , column(width = 6
@@ -52,9 +50,7 @@ ui <- dashboardPage(
                      , verbatimTextOutput("value")
                      , br()
                      , br()
-                     , br()
                      , verbatimTextOutput("slider_value")
-                     , br()
                      , br()
                      , br()
                      , verbatimTextOutput("text_value")
@@ -62,9 +58,9 @@ ui <- dashboardPage(
         )
         , tabBox(width = 6, height = "40vh"
                  , tabPanel(title = "Scatter Plot"
-                            , echarts4rOutput("scatter", height = "30vh"))
+                            , echarts4rOutput("scatter", height = "35vh"))
                  , tabPanel(title = "Bar Chart"
-                            , echarts4rOutput("bar", height = "30vh"))
+                            , echarts4rOutput("bar", height = "35vh"))
         )
       )
       , fluidRow(
