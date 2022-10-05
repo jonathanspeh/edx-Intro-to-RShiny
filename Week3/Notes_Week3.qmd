@@ -28,3 +28,62 @@ propertyTable=range_read(ss="https://docs.google.com/spreadsheets/d/1u_2Nn_ZeN0V
 
 ```
 
+## 'req()' function
+Can be used in the beginning of a reactive to ensure, that the values for the reactive are available before proceding. Stops reactive silently in case of missing values
+
+```{r}
+ui <- dashboardPage(
+  dashboardHeader(),
+  # Sidebar
+  dashboardSidebar(disable = TRUE),
+  # Body
+  dashboardBody(
+    fluidRow(
+      box(
+        width = 6, title = "Inputs", status = "primary",
+        uiOutput("property_price")),
+        box(
+          width = 6, title = "Inputs", status = "primary",
+                 DTOutput("propertyDT")))))
+
+
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+#read data 
+  propertyTable = read_csv(here::here("Week3", "Week3_myOwn", "property_data.csv"),
+                            show_col_types = FALSE)
+  # input
+  output$property_price = renderUI({
+    min = min(propertyTable$property_price)
+    max = max(propertyTable$property_price)
+    sliderInput("max_price", "Select Max. price", value = max, min = min, max = max)})
+  
+  # Data wrangling
+reactive_property_data = reactive({
+  req(input$max_price)
+  property_table|>
+    filter(property_price <= input$max_price)})
+
+  # Create Datatable
+  output$propertyDT <- renderDT({
+    datatable(reactive_property_data())})}
+
+shinyApp(ui = ui, server = server)
+```
+
+# `browswer()`
+
+allows you to "add stops" - point were the execution of the app stops so that adjustments until there can be done. This can especially usefull when devoloping graphics etc. 
+
+
+# Design
+Shinydashboard Skins is a parameter in the `dashboardPage()` that allows you to easily adjust the theme of the app.
+
+More advanced graphic adjustments require a `CSS` file in a `www` sub-directory
+A simple way to do css adjustments can be done by simply using Rstudio devtools to inspect the app, try changes an copy the css statment in `style.css`
+
+# Deployment - continue here...
+
+
+

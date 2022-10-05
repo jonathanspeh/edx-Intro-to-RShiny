@@ -129,4 +129,4 @@ datatable(propertyTable,
 
 read_csv(here::here("Week3", "Week3_myOwn", "property_data.csv"))
 
-
+dir.create(here::here("Week3", "Week3_myOwn", "www"))

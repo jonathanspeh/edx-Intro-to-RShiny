@@ -1,0 +1,14 @@
+name: Property_tracker
+title: Property_tracker
+username:
+account: jonathanspeh
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7221749
+bundleId: 6372793
+url: https://jonathanspeh.shinyapps.io/Property_tracker/
+when: 1664994891.0332
+lastSyncTime: 1664994891.03322
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: testScript.R

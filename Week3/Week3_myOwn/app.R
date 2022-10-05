@@ -5,16 +5,18 @@ library(echarts4r)
 library(leaflet)
 library(shinyWidgets)
 library(googlesheets4)
-library(dplyr)
+library(tidyverse)
 
-
+here::here()
 # Define UI for application that draws a histogram
-ui <- dashboardPage(
-  dashboardHeader(title = "Week 3 - Simple App"),
+ui <- dashboardPage(skin = "purple",
+  dashboardHeader(title = "Property Data"),
   # Sidebar
-  dashboardSidebar(),
+  dashboardSidebar(disable = TRUE),
   # Body
   dashboardBody(
+    includeCSS(here::here("Week3", "Week3_myOwn", "www","style.css")),
+    chooseSliderSkin(skin = "Shiny", color = "purple"),
     fluidRow(
       box(
         width = 6, height = 375, title = "Inputs", status = "primary",
@@ -61,7 +63,8 @@ server <- function(input, output) {
   # propertyTable <- range_read(ss = "https://docs.google.com/spreadsheets/d/1u_2Nn_ZeN0VdEGYJewQ2bJd_1KZzzjjUpQLwZ6_r8Uw/edit#gid=0")
   # propertyTable$property_area <- unlist(propertyTable$property_area)
   
-  property_table=read_csv(here::here("Week3", "Week3_myOwn", "property_data.csv"))
+  propertyTable = read_csv(here::here("Week3", "Week3_myOwn", "property_data.csv"),
+                            show_col_types = FALSE)
   # inputs
   output$propertyType = renderUI({
     choices = unique(propertyTable$property_type)
@@ -120,8 +123,10 @@ reactive_property_data = reactive({
     reactive_property_data()%>%
       group_by(property_type)%>%
       e_charts(property_area)%>%
-      e_scatter(property_price, symbol_size = 15)%>%
-      e_tooltip()
+      e_scatter(property_price, name = "Property Price", symbol_size = 15)%>%
+      e_tooltip()%>%
+      e_axis_labels(y = "Price", x = "ID")
+#browser()
   })
   
   output$property_bar = renderEcharts4r({

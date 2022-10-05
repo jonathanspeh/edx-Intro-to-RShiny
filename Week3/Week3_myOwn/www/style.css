@@ -1,0 +1,11 @@
+/*  top boarder of tab boxes */
+.nav-tabs-custom>.nav-tabs>li.active {
+    border-top-color: #733cbc;
+}
+
+.box.box-primary {
+    border-top-color: #733cbc;
+}
+
+
+
