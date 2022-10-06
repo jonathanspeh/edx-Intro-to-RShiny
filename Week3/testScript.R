@@ -127,6 +127,12 @@ datatable(propertyTable,
 
 
 
-read_csv(here::here("Week3", "Week3_myOwn", "property_data.csv"))
+
 
 dir.create(here::here("Week3", "Week3_myOwn", "www"))
+
+propDat = read_csv(here::here("Week3", "Week3_myOwn", "www", "property_data.csv"))
+save(propDat, file = here::here("Week3", "Week3_myOwn", "propDat.RData"))
+load(file = here::here("Week3", "Week3_myOwn", "propDat.RData"))
+
+mpd = propDat
