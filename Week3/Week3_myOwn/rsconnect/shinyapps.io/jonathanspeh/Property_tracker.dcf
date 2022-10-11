@@ -5,10 +5,10 @@ account: jonathanspeh
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 7221749
-bundleId: 6372793
+bundleId: 6377176
 url: https://jonathanspeh.shinyapps.io/Property_tracker/
-when: 1664994891.0332
-lastSyncTime: 1664994891.03322
+when: 1665087848.00579
+lastSyncTime: 1665087848.0058
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: testScript.R
+ignoredFiles: .cache/9566fe0643cfe888fecd0b72f870afec_jspeh456@gmail.com|cat.jpg

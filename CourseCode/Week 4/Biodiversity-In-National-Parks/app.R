@@ -233,64 +233,64 @@ server <- function(input, output) {
     # options(gargle_oauth_cache = ".cache") # designate project-specific cache
     # gargle::gargle_oauth_cache() # check the value of the option
     # googlesheets4::gs4_auth()# trigger auth on purpose to store a token in the specified cache
-    cache_directory <- ".cache/" # can add to config file
+    #cache_directory <- ".cache/" # can add to config file
     # list.files(cache_directory) # see your token file in the cache
     # googlesheets4::gs4_deauth() # de auth
     
-    gs4_auth(email = "YOUR_EMAIL", cache = cache_directory)
-    journal_url <- "YOUR_URL"
-    journal_data <- range_read(ss = journal_url)
+    # gs4_auth(email = "YOUR_EMAIL", cache = cache_directory)
+    # journal_url <- "YOUR_URL"
+    # journal_data <- range_read(ss = journal_url)
+    # 
+    # r <- reactiveValues()
+    # r$journal_data <- journal_data
+    # output$journal <- renderDT({
+    #     datatable(r$journal_data, rownames = F, options = list(scrollY = "75vh", paging = F))
+    # })
     
-    r <- reactiveValues()
-    r$journal_data <- journal_data
-    output$journal <- renderDT({
-        datatable(r$journal_data, rownames = F, options = list(scrollY = "75vh", paging = F))
-    })
-    
-    observeEvent(input$add_entry, {
-        showModal(
-            modalDialog(title = "New Entry"
-                        , footer = fluidRow(
-                            column(width = 6
-                                   , actionBttn("save", icon = icon("save"))
-                                   )
-                            , column(width = 6
-                                     , actionBttn("dismiss", icon = icon("times"))
-                                     )
-                        )
-                        , fluidRow(
-                            column(width = 6
-                                   , textInput("name", "Trip Name", value = "Trip Name")
-                                   , textInput("date", "Trip Date", value = "Trip Date")
-                                   )
-                            , column(width = 6
-                                     , textInput("parkName", "Park Name", value = "Park Name")
-                                     , textAreaInput("notes", "Notes", value = "Notes...")
-                                     )
-                        )
-                
-            )
-        )
-    })
-    observeEvent(input$dismiss, {
-        removeModal()
-    })
-    observeEvent(input$save, {
-        tripName <- input$name
-        tripDate <- input$date
-        parkName <- input$parkName
-        notes <- input$notes
-        
-        new_entry <- tibble("Trip Name" = c(tripName)
-                            , "Trip Date" = c(tripDate)
-                            , "Park Name" = c(parkName)
-                            , "Notes" = c(notes))
-        
-        sheet_append(ss = journal_url, new_entry)
-        showNotification("Entry added", type = "message")
-        r$journal_data <- r$journal_data %>% rbind(new_entry)
-        removeModal()
-    })
+    # observeEvent(input$add_entry, {
+    #     showModal(
+    #         modalDialog(title = "New Entry"
+    #                     , footer = fluidRow(
+    #                         column(width = 6
+    #                                , actionBttn("save", icon = icon("save"))
+    #                                )
+    #                         , column(width = 6
+    #                                  , actionBttn("dismiss", icon = icon("times"))
+    #                                  )
+    #                     )
+    #                     , fluidRow(
+    #                         column(width = 6
+    #                                , textInput("name", "Trip Name", value = "Trip Name")
+    #                                , textInput("date", "Trip Date", value = "Trip Date")
+    #                                )
+    #                         , column(width = 6
+    #                                  , textInput("parkName", "Park Name", value = "Park Name")
+    #                                  , textAreaInput("notes", "Notes", value = "Notes...")
+    #                                  )
+    #                     )
+    #             
+    #         )
+    #     )
+    # })
+    # observeEvent(input$dismiss, {
+    #     removeModal()
+    # })
+    # observeEvent(input$save, {
+    #     tripName <- input$name
+    #     tripDate <- input$date
+    #     parkName <- input$parkName
+    #     notes <- input$notes
+    #     
+    #     new_entry <- tibble("Trip Name" = c(tripName)
+    #                         , "Trip Date" = c(tripDate)
+    #                         , "Park Name" = c(parkName)
+    #                         , "Notes" = c(notes))
+    #     
+    #     sheet_append(ss = journal_url, new_entry)
+    #     showNotification("Entry added", type = "message")
+    #     r$journal_data <- r$journal_data %>% rbind(new_entry)
+    #     removeModal()
+    # })
 }
 
 # Run the application 
