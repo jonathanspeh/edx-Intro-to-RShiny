@@ -91,7 +91,6 @@ shinyApp(ui = ui, server = server)
 #propertyTable <- range_read(ss = "https://docs.google.com/spreadsheets/d/1u_2Nn_ZeN0VdEGYJewQ2bJd_1KZzzjjUpQLwZ6_r8Uw/edit#gid=0")
 #propertyTable$property_area <- unlist(propertyTable$property_area)
 
-%>% 
   
   propertyTable|>
   filter(property_type %in% c("lot", "house"),

@@ -27,5 +27,19 @@ element.style {
       /*overflow:scroll;*/
 }
 
+.bttn-unite.bttn-default {
+    border-color: #045832;
+    color: #00a65a;
+}
 
+.bttn-unite.bttn-default:focus, .bttn-unite.bttn-default:hover {
+    background: #00a65a82;
+    color: #00a65a;
+}
 
+.bttn-unite.bttn-default:before {
+    background: #8bc49b;
+}
+.bttn-unite.bttn-default:after {
+    background: #eee;
+}
