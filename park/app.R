@@ -5,9 +5,8 @@ library(DT)
 library(shinyWidgets)
 library(echarts4r)
 library(leaflet)
-# setwd("C:/Users/Admin/OneDrive - Charité - Universitätsmedizin Berlin/edx-Intro-to-RShiny/park")
+library(googlesheets4)
 
-# Define UI for application that draws a histogram
 ui <- dashboardPage(
   skin = "green",
   dashboardHeader(title = "Park App"),
@@ -43,7 +42,7 @@ ui <- dashboardPage(
               width = 4,
               status = "primary",
               title = "Filter Parks and Species",
-              height = "50vh",
+              height = "45vh",
               uiOutput("park_picker"),
               uiOutput("species_select")
             ),
@@ -51,7 +50,7 @@ ui <- dashboardPage(
               width = 4,
               status = "primary",
               title = "Species Overview",
-              height = "50vh",
+              height = "45vh",
               valueBoxOutput("spec_present",
                 width = 12
               ),
@@ -68,16 +67,15 @@ ui <- dashboardPage(
               width = 4,
               status = "primary",
               title = "Category count",
-              height = "50vh",
+              height = "45vh",
               echarts4rOutput("category_count")
             )
           ),
           fluidRow(
             box(
               width = 12,
-              height = "30vh",
+              height = "35vh",
               status = "primary",
-              # style = 'overflow-x: scroll;height:200px;overflow-y: scroll;',
               DTOutput("spec_table")
             )
           )
@@ -114,7 +112,13 @@ ui <- dashboardPage(
         tabName = "journal",
         fluidPage(
           fluidRow(
-            box(width = 12)
+            box(
+              width = 12, status = "primary",
+              height = "80vh",
+              title = "Trip Journal",
+              actionBttn("add_entry", icon = icon("plus")),
+              DTOutput("journal")
+            )
           )
         )
       )
@@ -194,10 +198,14 @@ server <- function(input, output) {
         options = list(
           paging = FALSE,
           scrollX = TRUE,
-          scrollY = "30vh",
+          scrollY = "20vh",
           searching = FALSE,
           info = FALSE
         )
+      ) %>%
+      formatStyle("Conservation Status",
+        target = "row",
+        backgroundColor = styleEqual(c(NA, "Species of Concern", "Endangered"), c(NA, "orange", "red"))
       )
   })
   ### species value boxes -----
@@ -266,9 +274,9 @@ server <- function(input, output) {
       e_tooltip() %>%
       e_axis(axisLabel = list(interval = 0, rotate = 45)) %>%
       e_grid(
-        top = "1%",
+        top = "4%",
         left = "20%",
-        height = "30%"
+        height = "25%"
       )
   })
   # map tab -----
@@ -277,7 +285,7 @@ server <- function(input, output) {
     max <- max(parks$acres)
     min <- min(parks$acres)
     sliderInput("area_slider",
-      "Select area of National Parl",
+      "Select Area of National Park",
       min = min,
       max = max,
       value = c(min, max),
@@ -312,6 +320,95 @@ server <- function(input, output) {
         label = ~park_name,
         popup = ~popup
       )
+  })
+  # Journal tab -----
+  ## authentification -----
+  options(gargle_oauth_cache = ".secrets") # designate project-specific cache
+  # gargle::gargle_oauth_cache() # check the value of the option
+  # googlesheets4::gs4_auth()# trigger auth on purpose to store a token in the specified cache
+  cache_directory <- ".secrets/" # can add to config file
+  # list.files(cache_directory) # see your token file in the cache
+  # googlesheets4::gs4_deauth() # de auth
+
+  gs4_auth(email = "jspeh456@gmail.com", cache = cache_directory)
+  journal_url <- "https://docs.google.com/spreadsheets/d/1gJ4dRZDwxnptrgscCvH3fu0ns9kzcRcZwpPDN7dnGvM/edit#gid=0"
+  park_journal <- range_read(ss = journal_url)
+  r <- reactiveValues()
+  r$park_journal <- park_journal
+
+
+  ## datatable -----
+  output$journal <- renderDT({
+    datatable(r$park_journal,
+      rownames = FALSE,
+      width = "100%",
+      options = list(
+        paging = FALSE,
+        scrollX = TRUE,
+        scrollY = "50vh",
+        searching = FALSE,
+        info = FALSE
+      )
+    )
+  })
+
+
+  observeEvent(input$add_entry, {
+    choices <- parks$park_name
+    showModal(
+      modalDialog(
+        title = "New Trip",
+        footer = fluidRow(
+          column(
+            width = 6,
+            actionBttn("save", icon = icon("save"))
+          ),
+          column(
+            width = 6,
+            actionBttn("dismiss", icon = icon("times"))
+          )
+        ),
+        easyClose = TRUE,
+        fluidRow(
+          column(
+            width = 6,
+            textInput("name", "Trip Name", value = "Trip Name"),
+            dateInput("date", "Trip Date",
+              format = "dd. MM yyyy"
+            )
+          ),
+          column(
+            width = 6,
+            pickerInput("park_name", "Park Name",
+              choices = choices
+            ),
+            textAreaInput("notes", "Notes", value = "Notes...")
+          )
+        )
+      )
+    )
+  })
+  observeEvent(input$save, {
+    trip_name <- input$name
+    trip_date <- format(input$date, "%d. %B %Y")
+    park_name <- input$park_name
+    notes <- input$notes
+    new_entry <- tibble(
+      "Trip Name" = trip_name,
+      "Trip Date" = trip_date,
+      "Park Name" = park_name,
+      "Notes" = notes
+    )
+    sheet_append(
+      ss = journal_url,
+      data = new_entry
+    )
+    showNotification("Trip added", type = "message")
+    r$park_journal <- rbind(r$park_journal, new_entry)
+    removeModal()
+  })
+  observeEvent(input$dismiss, {
+    removeModal()
   })
 }
 # Run the application
